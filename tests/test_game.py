@@ -27,7 +27,7 @@ class TestCharacter:
         character.handle_action(Action.MOVE_LEFT, self.MAX_Y, self.MAX_X)
 
         # Assert that we moved back into the 0th position
-        assert character.x == 2  # Moved over half(ish) the length
+        assert character.x == 2
         assert character.y == 0
 
     def test_handle_right_when_cannot_go_right(self):
@@ -49,9 +49,7 @@ class TestCharacter:
         character = self.create_char(x=min_spot)
         character.handle_action(Action.MOVE_RIGHT, self.MAX_Y, self.MAX_X)
 
-        # Assert that we moved back into the 0th position
-        expected_x = (self.MAX_X - len(self.PIECE)) + 1
-        assert character.x == expected_x
+        assert character.x == 6
         assert character.y == 0
 
     def test_handle_up_when_cannot_go_up(self):

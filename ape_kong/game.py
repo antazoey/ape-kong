@@ -60,13 +60,14 @@ class Character:
         elif action == Action.MOVE_DOWN and self.y < max_y:
             self.y += 1
         elif action == Action.MOVE_LEFT and self.x >= len(self):
-            self.x -= int((len(self) / 2))
+            self.x -= 1
         elif action == Action.MOVE_RIGHT and self.x <= (max_x - 2 * len(self)) + 1:
-            self.x += len(self)
+            self.x += 1
         else:
             return None
 
-        return ActionResult.HAS_MOVED if self.x != original_x or self.y != original_y else None
+        result = ActionResult.HAS_MOVED if self.x != original_x or self.y != original_y else None
+        return result
 
 
 class ApeKong:
@@ -115,8 +116,7 @@ class ApeKong:
         start_x, length = get_clear_space(
             original_y, self._character.y, original_x, self._character.x, self._character.piece
         )
-        spaces = length * " "
-        self._draw(y, x, spaces)
+        self._draw(original_y, start_x, " " * length)
 
     def _draw(self, y, x, text):
         max_y, max_x = self.screen_size

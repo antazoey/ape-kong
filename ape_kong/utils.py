@@ -13,7 +13,7 @@ def get_clear_space(original_y, new_y, original_x, new_x, text) -> Tuple[int, in
         length = original_x - new_x
 
     else:
-        start_x = 0
-        length = 0
+        start_x = original_x
+        length = len(text)
 
     return start_x, length
