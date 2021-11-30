@@ -1,6 +1,6 @@
 import click
-
 from ape import config
+
 from .game import play
 
 

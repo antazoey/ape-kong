@@ -2,6 +2,8 @@ import curses
 from enum import Enum
 from typing import Optional, Tuple
 
+from .utils import get_clear_space
+
 
 class Action(Enum):
     MOVE_UP = 0
@@ -46,24 +48,25 @@ class Character:
     def __len__(self):
         return len(self.piece)
 
-    def handle_action(
-        self, action: Action, max_y: int, max_x: int
-    ) -> Optional[ActionResult]:
+    def handle_action(self, action: Action, max_y: int, max_x: int) -> Optional[ActionResult]:
         if not action:
             return None
+
+        original_y = self.y
+        original_x = self.x
 
         if action == Action.MOVE_UP and self.y > 0:
             self.y -= 1
         elif action == Action.MOVE_DOWN and self.y < max_y:
             self.y += 1
         elif action == Action.MOVE_LEFT and self.x >= len(self):
-            self.x -= len(self)
+            self.x -= int((len(self) / 2))
         elif action == Action.MOVE_RIGHT and self.x <= (max_x - 2 * len(self)) + 1:
             self.x += len(self)
         else:
             return None
 
-        return ActionResult.HAS_MOVED
+        return ActionResult.HAS_MOVED if self.x != original_x or self.y != original_y else None
 
 
 class ApeKong:
@@ -92,9 +95,8 @@ class ApeKong:
                 original_x = self._character.x
                 result = self._character.handle_action(action, *self.screen_size)
                 if result and result == result.HAS_MOVED:
-                    did_draw = self.draw_ape()
-                    if did_draw:
-                        self.clear(original_y, original_x)
+                    self.draw_ape()
+                    self.clear_old_character_spot(original_y, original_x)
 
             return 0
         except Exception:
@@ -107,18 +109,13 @@ class ApeKong:
 
     def draw_ape(self):
         max_y, max_x = self.screen_size
-
         self._draw(*self._character)
-        return True
-        # # Only draw if the character is not going off the screen.
-        # if 0 <= self._character.y <= max_y and 0 <= self._character.x <= max_x:
-        #     self._draw(*self._character)
-        #     return True
-        #
-        # return False
 
-    def clear(self, y, x):
-        spaces = len(self._character) * " "
+    def clear_old_character_spot(self, original_y, original_x):
+        start_x, length = get_clear_space(
+            original_y, self._character.y, original_x, self._character.x, self._character.piece
+        )
+        spaces = length * " "
         self._draw(y, x, spaces)
 
     def _draw(self, y, x, text):
