@@ -6,5 +6,5 @@ from .game import play
 
 @click.command(short_help="Play Ape Kong")
 def kong():
-    piece = config.get_config("kong").piece
+    piece = config.get_config("kong").game_piece
     play(piece)
